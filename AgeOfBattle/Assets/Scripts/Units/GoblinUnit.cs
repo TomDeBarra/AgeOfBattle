@@ -8,12 +8,14 @@ public class GoblinUnit : AbstractUnit
     // Start is called before the first frame update
     void Start()
     {
+
         this.setSpeed(6);
         this.setDamage(7);
         this.setHealth(25);
         this.setPlayerControlled(true);
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -22,7 +24,6 @@ public class GoblinUnit : AbstractUnit
         Move();
     }
 
-    
     public override void Die()
     {
         Debug.Log($"{gameObject.name} has died!");

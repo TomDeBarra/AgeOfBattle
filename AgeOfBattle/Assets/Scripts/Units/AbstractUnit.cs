@@ -7,18 +7,20 @@ public abstract class AbstractUnit : MonoBehaviour
     protected AudioSource audioSource;
     protected AudioClip attackSound;
     // Unit stats
-    private int health; // Health of the unit
-    private int damage; // Damage dealt by the unit
+    protected int health; // Health of the unit
+    protected int damage; // Damage dealt by the unit
 
     // Movement variables
-    private float speed; // Speed of the unit
-    private int direction = -1; // Direction of movement: 1 for positive x, -1 for negative x
+    protected float speed; // Speed of the unit
+    protected int direction = 1; // Direction of movement: 1 for positive x, -1 for negative x
 
     // Control type
+
     private bool isPlayerControlled = false; // Specifies whether the unit is player-controlled or enemy-controlled
     private int attackTime = 2; // Time delay between attacks
     private bool isAttacking = false; // Prevents multiple attacks at once
     private bool isMoving = true;
+
 
     // Method for taking damage
     public void TakeDamage(int damageTaken)
@@ -32,7 +34,7 @@ public abstract class AbstractUnit : MonoBehaviour
         }
     }
       
-    // Abstract method for dying (to be implemented by derived classes)
+    // Abstract methods for dying and attacking (to be implemented by derived classes)
     public abstract void Die();
     public abstract void PlayAttackAnimationAndSound();
 
@@ -62,11 +64,13 @@ public abstract class AbstractUnit : MonoBehaviour
 
     public void setPlayerControlled(bool boolean)
     {
+
         this.isPlayerControlled = boolean;
      //   if (isPlayerControlled)
      //       this.direction = 1;
      //   else
      //       this.direction = -1;
+
     }
 
     public void setSpeed(int speed) 
@@ -96,6 +100,7 @@ public abstract class AbstractUnit : MonoBehaviour
         if (otherUnit != null)
         {
             print("Ouch");
+
             if (otherUnit.isPlayerControlled == this.isPlayerControlled)
             {
                 Debug.Log($"{gameObject.name} is waiting due to collision with ally: {otherUnit.gameObject.name}");
@@ -104,7 +109,9 @@ public abstract class AbstractUnit : MonoBehaviour
             else
             {
                 Debug.Log($"{gameObject.name} is attacking enemy: {otherUnit.gameObject.name}");
+
                 StartCoroutine(AttackRoutine(otherUnit));
+
             }
         }
     }
@@ -121,6 +128,7 @@ public abstract class AbstractUnit : MonoBehaviour
     }
 
     // Attack method
+
     // Attack method with delay
     private IEnumerator AttackRoutine(AbstractUnit target)
     {
@@ -147,4 +155,6 @@ public abstract class AbstractUnit : MonoBehaviour
         isMoving = true; // Resume movement after combat
     }
 
+
 }
+
