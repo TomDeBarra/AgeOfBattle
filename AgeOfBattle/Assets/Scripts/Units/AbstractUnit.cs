@@ -1,7 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class AbstractUnit : MonoBehaviour
 {
+    protected Animator animator;
+    protected AudioSource audioSource;
+    protected AudioClip attackSound;
     // Unit stats
     protected int health; // Health of the unit
     protected int damage; // Damage dealt by the unit
@@ -11,10 +15,12 @@ public abstract class AbstractUnit : MonoBehaviour
     protected int direction = 1; // Direction of movement: 1 for positive x, -1 for negative x
 
     // Control type
-    protected bool isPlayerControlled = false; // Specifies whether the unit is player-controlled or enemy-controlled
 
-    // Movement state
-    private bool isMoving = true; // Determines if the unit is moving
+    private bool isPlayerControlled = false; // Specifies whether the unit is player-controlled or enemy-controlled
+    private int attackTime = 2; // Time delay between attacks
+    private bool isAttacking = false; // Prevents multiple attacks at once
+    private bool isMoving = true;
+
 
     // Method for taking damage
     public void TakeDamage(int damageTaken)
@@ -35,17 +41,36 @@ public abstract class AbstractUnit : MonoBehaviour
     // Method for moving the unit
     public void Move()
     {
-        // Calculate movement based on speed and direction
-        Vector3 movement = new Vector3(speed * direction * Time.deltaTime, 0, 0);
-        transform.Translate(movement);
+        if (isMoving && !isAttacking)
+        {
+            Vector3 movement = new Vector3(speed * direction * Time.deltaTime, 0, 0);
+            transform.Translate(movement);
+            //   Debug.Log($"{gameObject.name} is moving with speed {speed} and direction {direction}");
+            if (animator != null)
+            {
+                animator.SetBool("isRunning", true); // Play run animation
+            }
+        }
+        else
+        {
+            if (animator != null)
+            {
+                animator.SetBool("isRunning", false); // Stop run animation
+            }
+            Debug.Log($"{gameObject.name} is stopped and waiting.");
+        }
 
-        Debug.Log($"{gameObject.name} is moving with speed {speed} and direction {direction}");
     }
 
-    public void setPlayerControlled()
+    public void setPlayerControlled(bool boolean)
     {
-        this.isPlayerControlled = true;
-        this.direction = -1;
+
+        this.isPlayerControlled = boolean;
+     //   if (isPlayerControlled)
+     //       this.direction = 1;
+     //   else
+     //       this.direction = -1;
+
     }
 
     public void setSpeed(int speed) 
@@ -53,22 +78,29 @@ public abstract class AbstractUnit : MonoBehaviour
         this.speed = speed; 
     }
 
-    public void setHealth(int health) {
+    public void setDamage(int damage)
+    {
+        this.damage = damage;
+    }
+
+    public void setHealth (int health)
+    {
         this.health = health;
     }
 
-    public void setSpeed(float speed) {
-        this.speed = health;
+    public void setAttackTime(int attackTime)
+    {
+        this.attackTime = attackTime;
     }
 
-    // Collision detection
-    // Collision detection
     private void OnTriggerEnter(Collider other)
     {
         AbstractUnit otherUnit = other.GetComponent<AbstractUnit>();
-
+        
         if (otherUnit != null)
         {
+            print("Ouch");
+
             if (otherUnit.isPlayerControlled == this.isPlayerControlled)
             {
                 Debug.Log($"{gameObject.name} is waiting due to collision with ally: {otherUnit.gameObject.name}");
@@ -77,8 +109,9 @@ public abstract class AbstractUnit : MonoBehaviour
             else
             {
                 Debug.Log($"{gameObject.name} is attacking enemy: {otherUnit.gameObject.name}");
-                Attack(otherUnit);
-                isMoving = false; // Stop movement during attack
+
+                StartCoroutine(AttackRoutine(otherUnit));
+
             }
         }
     }
@@ -95,22 +128,33 @@ public abstract class AbstractUnit : MonoBehaviour
     }
 
     // Attack method
-    private void Attack(AbstractUnit target)
+
+    // Attack method with delay
+    private IEnumerator AttackRoutine(AbstractUnit target)
     {
-        if (target != null)
+        isAttacking = true;
+        isMoving = false; // Stop movement during attack
+        
+        while (target != null && target.health > 0)
         {
+            Debug.Log($"{gameObject.name} is attacking {target.gameObject.name}!");
             target.TakeDamage(damage); // Inflict damage on the target
+            PlayAttackAnimationAndSound(); // Play attack animation and sound
 
-            // Play attack animation and sound
-            PlayAttackAnimationAndSound();
-
-            // Example (commented out):
+            // Example of returning to idle animation if not attacking
             // Animator animator = GetComponent<Animator>();
-            // animator.Play("AttackAnimation");
-            // AudioSource audioSource = GetComponent<AudioSource>();
-            // audioSource.PlayOneShot(attackSound);
-            // animator.Play("IdleAnimation");
+            // if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            // {
+            //     animator.Play("Idle");
+            // }
+
+            yield return new WaitForSeconds(attackTime); // Wait before next attack
         }
+        
+        isAttacking = false;
+        isMoving = true; // Resume movement after combat
     }
+
+
 }
 

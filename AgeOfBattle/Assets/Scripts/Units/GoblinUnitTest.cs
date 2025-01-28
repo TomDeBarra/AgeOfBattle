@@ -2,20 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GoblinUnit : AbstractUnit
+public class GoblinUnitTest : AbstractUnit
 {
 
     // Start is called before the first frame update
     void Start()
     {
-
         this.setSpeed(6);
         this.setDamage(7);
         this.setHealth(25);
-        this.setPlayerControlled(true);
+        this.setAttackTime(4);
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-
+        this.setPlayerControlled(false);
     }
 
     // Update is called once per frame
@@ -24,6 +23,7 @@ public class GoblinUnit : AbstractUnit
         Move();
     }
 
+    
     public override void Die()
     {
         Debug.Log($"{gameObject.name} has died!");
@@ -35,7 +35,7 @@ public class GoblinUnit : AbstractUnit
         if (animator != null)
         {
             Debug.Log($"{gameObject.name} is playing attack animation.");
-            animator.SetBool("isAttacking", true); // Trigger attack animation
+            animator.Play("RigGob_Attack"); // Play attack animation
         }
         else
         {
@@ -66,7 +66,7 @@ public class GoblinUnit : AbstractUnit
         if (animator != null)
         {
             Debug.Log($"{gameObject.name} returning to idle animation.");
-            animator.SetBool("isAttacking", false); // Return to idle animation
+            animator.Play("RigGob1_Idle"); // Play idle animation
         }
     }
 }
