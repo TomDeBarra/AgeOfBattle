@@ -1,10 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class UnitButtonManager : AbstractButton
 {
     public ButtonManager mainButtonManager; // Reference to the original ButtonManager instance
     public GameObject goblinPlayerPrefab;
+
+    void Awake()
+    {
+        Debug.Log("Attempting to load GoblinPlayer prefab dynamically using Addressables...");
+
+        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GoblinPlayer.prefab").Completed += handle =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                goblinPlayerPrefab = handle.Result;
+                Debug.Log("GoblinPlayer prefab successfully assigned dynamically.");
+            }
+            else
+            {
+                Debug.LogError("Failed to load GoblinPlayer prefab using Addressables!");
+            }
+        };
+    }
 
     void Start()
     {
@@ -72,16 +92,20 @@ public class UnitButtonManager : AbstractButton
             case 0:
                 Debug.Log("Spawning goblin...");
                 // Define spawn position (change the Vector3 values as needed)
-                Vector3 spawnPosition = new Vector3(-24.53f, 2.384186e-07f, 6.467504f); // Example coordinates
-                Quaternion spawnRotation = Quaternion.Euler(0f, 180f, 0f);
-
+                Vector3 spawnPosition = new Vector3(-24.53f, -0.015f, 6.467504f); // Example coordinates
+                Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
+                if (goblinPlayerPrefab == null)
+                {
+                    Debug.LogError("GoblinPlayer prefab is not assigned in the Inspector!");
+                    return; // Exit the function if the prefab is missing
+                }
                 // Instantiate the GoblinPlayer prefab at the specified position
                 GameObject goblin = Instantiate(goblinPlayerPrefab, spawnPosition, spawnRotation);
 
                 // Optionally, set the Goblin as a child of a specific parent (e.g., the game world or a unit manager)
                 // goblin.transform.parent = someParentTransform;
+                Debug.Log("GoblinPlayer successfully spawned!");
 
-                break;
                 break;
             case 1:
                 Debug.Log("Spawning units...");

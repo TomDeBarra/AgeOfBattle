@@ -12,7 +12,6 @@ public class GoblinUnit : AbstractUnit
         this.setSpeed(6);
         this.setDamage(7);
         this.setHealth(25);
-        this.setPlayerControlled(true);
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
 
@@ -27,7 +26,11 @@ public class GoblinUnit : AbstractUnit
     public override void Die()
     {
         Debug.Log($"{gameObject.name} has died!");
-        Destroy(gameObject); // Destroy the unit
+        if (animator != null)
+        {
+            animator.Play("RigGob1_Death"); // Play death animation
+        }
+        StartCoroutine(DestroyAfterDelay(1f)); // Destroy after 1 second
     }
 
     override public void PlayAttackAnimationAndSound()
@@ -68,5 +71,11 @@ public class GoblinUnit : AbstractUnit
             Debug.Log($"{gameObject.name} returning to idle animation.");
             animator.SetBool("isAttacking", false); // Return to idle animation
         }
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 }
