@@ -1,28 +1,55 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class AbstractUnit : MonoBehaviour
 {
     protected Animator animator;
     protected AudioSource audioSource;
     protected AudioClip attackSound;
-    // Unit stats
-    protected int health; // Health of the unit
-    protected int damage; // Damage dealt by the unit
-
-    // Movement variables
-    protected float speed; // Speed of the unit
-    protected int direction = 1; // Direction of movement: 1 for positive x, -1 for negative x
-
-    // Control type
-
-    private bool isPlayerControlled = false; // Specifies whether the unit is player-controlled or enemy-controlled
-    private int attackTime = 2; // Time delay between attacks
-    private bool isAttacking = false; // Prevents multiple attacks at once
+    protected int health;
+    protected int damage;
+    protected float speed;
+    protected int direction = 1;
+    private bool isPlayerControlled = true;
+    private int attackTime = 2;
+    private bool isAttacking = false;
     private bool isMoving = true;
 
+    private static List<AbstractUnit> unitQueue = new List<AbstractUnit>();
 
-    // Method for taking damage
+    private void Awake()
+    {
+        unitQueue.Add(this); // Add unit to queue when spawned
+    }
+
+    private void Start()
+    {
+        InvokeRepeating("CheckSpawnClogging", 1f, 1f); // Check every second
+    }
+
+    private void CheckSpawnClogging()
+    {
+        if (unitQueue.Count > 1)
+        {
+            for (int i = 0; i < unitQueue.Count; i++)
+            {
+                if (i == 0)
+                {
+                    unitQueue[i].isMoving = true; // First spawned unit has priority
+                }
+                else
+                {
+                    float distanceToPrevious = Mathf.Abs(unitQueue[i].transform.position.x - unitQueue[i - 1].transform.position.x);
+                    if (distanceToPrevious > 1.5f)
+                    {
+                        unitQueue[i].isMoving = true;
+                    }
+                }
+            }
+        }
+    }
+
     public void TakeDamage(int damageTaken)
     {
         health -= damageTaken;
@@ -33,85 +60,89 @@ public abstract class AbstractUnit : MonoBehaviour
             Die();
         }
     }
-      
-    // Abstract methods for dying and attacking (to be implemented by derived classes)
+
     public abstract void Die();
     public abstract void PlayAttackAnimationAndSound();
 
-    // Method for moving the unit
     public void Move()
     {
         if (isMoving && !isAttacking)
         {
             Vector3 movement = new Vector3(speed * direction * Time.deltaTime, 0, 0);
             transform.Translate(movement);
-            //   Debug.Log($"{gameObject.name} is moving with speed {speed} and direction {direction}");
             if (animator != null)
             {
-                animator.SetBool("isRunning", true); // Play run animation
+                animator.SetBool("isRunning", true);
             }
         }
         else
         {
             if (animator != null)
             {
-                animator.SetBool("isRunning", false); // Stop run animation
+                animator.SetBool("isRunning", false);
             }
-            Debug.Log($"{gameObject.name} is stopped and waiting.");
         }
-
     }
 
     public void setPlayerControlled(bool boolean)
     {
-
         this.isPlayerControlled = boolean;
-     //   if (isPlayerControlled)
-     //       this.direction = 1;
-     //   else
-     //       this.direction = -1;
-
+        if (isPlayerControlled)
+            this.direction = 1;
+        else
+            this.direction = -1;
     }
 
-    public void setSpeed(int speed) 
-    { 
-        this.speed = speed; 
-    }
-
-    public void setDamage(int damage)
+    public void setDirection(int direction)
     {
-        this.damage = damage;
+        this.direction = direction;
     }
 
-    public void setHealth (int health)
-    {
-        this.health = health;
-    }
 
-    public void setAttackTime(int attackTime)
-    {
-        this.attackTime = attackTime;
-    }
+    public void setSpeed(int speed) { this.speed = speed; }
+    public void setDamage(int damage) { this.damage = damage; }
+    public void setHealth(int health) { this.health = health; }
+    public void setAttackTime(int attackTime) { this.attackTime = attackTime; }
 
     private void OnTriggerEnter(Collider other)
     {
         AbstractUnit otherUnit = other.GetComponent<AbstractUnit>();
-        
+
         if (otherUnit != null)
         {
-            print("Ouch");
+            float distanceToOther = Mathf.Abs(transform.position.x - other.transform.position.x);
+            float minSeparation = 2f;
 
             if (otherUnit.isPlayerControlled == this.isPlayerControlled)
             {
-                Debug.Log($"{gameObject.name} is waiting due to collision with ally: {otherUnit.gameObject.name}");
-                isMoving = false; // Stop movement
+                if (other.transform.position.x < transform.position.x && distanceToOther > minSeparation)
+                {
+                    isMoving = true;
+                    if (animator != null)
+                    {
+                        animator.SetBool("isRunning", true);
+                        animator.SetBool("isIdle", false);
+                    }
+                }
+                else
+                {
+                    isMoving = false;
+                    if (animator != null)
+                    {
+                        animator.SetBool("isRunning", false);
+                        animator.SetBool("isIdle", true);
+                    }
+                }
             }
             else
             {
-                Debug.Log($"{gameObject.name} is attacking enemy: {otherUnit.gameObject.name}");
-
                 StartCoroutine(AttackRoutine(otherUnit));
-
+                isMoving = false;
+                if (animator != null)
+                {
+                    animator.SetBool("isRunning", false);
+                    animator.SetBool("isIdle", true);
+                }
             }
         }
     }
@@ -119,42 +150,28 @@ public abstract class AbstractUnit : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         AbstractUnit otherUnit = other.GetComponent<AbstractUnit>();
-
         if (otherUnit != null)
         {
-            Debug.Log($"{gameObject.name} has resumed movement after collision with: {otherUnit.gameObject.name}");
-            isMoving = true; // Resume movement
+            isMoving = true;
+            if (animator != null)
+            {
+                animator.SetBool("isRunning", true);
+                animator.SetBool("isIdle", false);
+            }
         }
     }
 
-    // Attack method
-
-    // Attack method with delay
     private IEnumerator AttackRoutine(AbstractUnit target)
     {
         isAttacking = true;
-        isMoving = false; // Stop movement during attack
-        
+        isMoving = false;
         while (target != null && target.health > 0)
         {
-            Debug.Log($"{gameObject.name} is attacking {target.gameObject.name}!");
-            target.TakeDamage(damage); // Inflict damage on the target
-            PlayAttackAnimationAndSound(); // Play attack animation and sound
-
-            // Example of returning to idle animation if not attacking
-            // Animator animator = GetComponent<Animator>();
-            // if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            // {
-            //     animator.Play("Idle");
-            // }
-
-            yield return new WaitForSeconds(attackTime); // Wait before next attack
+            target.TakeDamage(damage);
+            PlayAttackAnimationAndSound();
+            yield return new WaitForSeconds(attackTime);
         }
-        
         isAttacking = false;
-        isMoving = true; // Resume movement after combat
+        isMoving = true;
     }
-
-
 }
-
