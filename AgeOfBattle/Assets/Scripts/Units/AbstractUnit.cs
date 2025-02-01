@@ -7,6 +7,7 @@ public abstract class AbstractUnit : MonoBehaviour
     protected Animator animator;
     protected AudioSource audioSource;
     protected AudioClip attackSound;
+    protected AudioClip deathSound;
     protected int health;
     protected int damage;
     protected float speed;
@@ -16,38 +17,14 @@ public abstract class AbstractUnit : MonoBehaviour
     private bool isAttacking = false;
     private bool isMoving = true;
 
-    private static List<AbstractUnit> unitQueue = new List<AbstractUnit>();
-
-    private void Awake()
-    {
-        unitQueue.Add(this); // Add unit to queue when spawned
-    }
-
     private void Start()
     {
-        InvokeRepeating("CheckSpawnClogging", 1f, 1f); // Check every second
+        
     }
 
-    private void CheckSpawnClogging()
-    {
-        if (unitQueue.Count > 1)
-        {
-            for (int i = 0; i < unitQueue.Count; i++)
-            {
-                if (i == 0)
-                {
-                    unitQueue[i].isMoving = true; // First spawned unit has priority
-                }
-                else
-                {
-                    float distanceToPrevious = Mathf.Abs(unitQueue[i].transform.position.x - unitQueue[i - 1].transform.position.x);
-                    if (distanceToPrevious > 1.5f)
-                    {
-                        unitQueue[i].isMoving = true;
-                    }
-                }
-            }
-        }
+    private void Update()
+    {   
+        
     }
 
     public void TakeDamage(int damageTaken)
@@ -63,6 +40,43 @@ public abstract class AbstractUnit : MonoBehaviour
 
     public abstract void Die();
     public abstract void PlayAttackAnimationAndSound();
+
+    protected void checkForFriendlyUnitCollisionAhead()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.5f); // Adjust radius if needed
+        bool friendlyUnitAhead = false;
+
+        foreach (var hitCollider in hitColliders)
+        {
+            AbstractUnit otherUnit = hitCollider.GetComponent<AbstractUnit>();
+            if (otherUnit != null && otherUnit != this && otherUnit.isPlayerControlled == this.isPlayerControlled) // Ensure it's an AbstractUnit, not itself & friendly
+            {
+                if ((otherUnit.transform.position.x > transform.position.x && isPlayerControlled) ||
+                    (otherUnit.transform.position.x < transform.position.x && !isPlayerControlled))
+                {
+                    friendlyUnitAhead = true;
+                    break; // Exit loop if we find a valid friendly unit ahead
+                }
+            }
+        }
+
+        if (!friendlyUnitAhead && !isAttacking)
+        {
+            isMoving = true;
+            if (animator != null)
+            {
+                animator.SetBool("isRunning", true);
+            }
+        }
+        else
+        {
+            isMoving = false;
+            if (animator != null)
+            {
+                animator.SetBool("isRunning", false);
+            }
+        }
+    }
 
     public void Move()
     {
@@ -111,41 +125,49 @@ public abstract class AbstractUnit : MonoBehaviour
         if (otherUnit != null)
         {
             float distanceToOther = Mathf.Abs(transform.position.x - other.transform.position.x);
-            float minSeparation = 2f;
+            float minSeparation = 2f; // Adjust spacing if needed
 
             if (otherUnit.isPlayerControlled == this.isPlayerControlled)
             {
-                if (other.transform.position.x < transform.position.x && distanceToOther > minSeparation)
+                if (distanceToOther < 1f)
                 {
-                    isMoving = true;
-                    if (animator != null)
-                    {
-                        animator.SetBool("isRunning", true);
-                        animator.SetBool("isIdle", false);
-                    }
+                    Debug.Log($"{gameObject.name} is continuing movement despite friendly unit inside.");
+                    isMoving = true; // Continue moving if the friendly unit is INSIDE
                 }
                 else
                 {
-                    isMoving = false;
-                    if (animator != null)
+                    if (other.transform.position.x < transform.position.x && isPlayerControlled || other.transform.position.x > transform.position.x && !isPlayerControlled) // Friendly unit is behind
                     {
-                        animator.SetBool("isRunning", false);
-                        animator.SetBool("isIdle", true);
+                        Debug.Log($"{gameObject.name} is continuing movement despite friendly unit behind.");
+                        isMoving = true; // Continue moving if the friendly unit is BEHIND
+                    }
+                    else // Friendly unit is ahead
+                    {
+                        if (distanceToOther < minSeparation)
+                        {
+                            Debug.Log($"{gameObject.name} is stopping to maintain spacing.");
+                            isMoving = false;
+                            if (animator != null)
+                            {
+                                animator.SetBool("isRunning", false);
+                            }
+                        }
                     }
                 }
             }
             else
             {
+                Debug.Log($"{gameObject.name} is attacking enemy: {otherUnit.gameObject.name}");
                 StartCoroutine(AttackRoutine(otherUnit));
                 isMoving = false;
                 if (animator != null)
                 {
                     animator.SetBool("isRunning", false);
-                    animator.SetBool("isIdle", true);
                 }
             }
         }
     }
+
 
     private void OnTriggerExit(Collider other)
     {
@@ -156,7 +178,6 @@ public abstract class AbstractUnit : MonoBehaviour
             if (animator != null)
             {
                 animator.SetBool("isRunning", true);
-                animator.SetBool("isIdle", false);
             }
         }
     }

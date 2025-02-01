@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GoblinUnit : AbstractUnit
 {
+    private Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
@@ -14,13 +15,14 @@ public class GoblinUnit : AbstractUnit
         this.setHealth(25);
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+        checkForFriendlyUnitCollisionAhead();
     }
 
     public override void Die()
@@ -30,7 +32,25 @@ public class GoblinUnit : AbstractUnit
         {
             animator.Play("RigGob1_Death"); // Play death animation
         }
+        if (rb != null)
+        {
+            rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+        }
         StartCoroutine(DestroyAfterDelay(1f)); // Destroy after 1 second
+
+        if (audioSource != null && attackSound != null)
+        {
+            Debug.Log($"{gameObject.name} is playing attack sound.");
+            audioSource.PlayOneShot(deathSound); // Play attack sound
+        }
+        else if (audioSource == null)
+        {
+            Debug.LogError("AudioSource not found on " + gameObject.name);
+        }
+        else if (deathSound == null)
+        {
+            Debug.LogError("Death sound not assigned in the Inspector.");
+        }
     }
 
     override public void PlayAttackAnimationAndSound()
@@ -65,7 +85,7 @@ public class GoblinUnit : AbstractUnit
 
     private System.Collections.IEnumerator ReturnToIdle()
     {
-        yield return new WaitForSeconds(1.0f); // Adjust delay based on attack animation length
+        yield return new WaitForSeconds(2.0f); // Adjust delay based on attack animation length
         if (animator != null)
         {
             Debug.Log($"{gameObject.name} returning to idle animation.");
