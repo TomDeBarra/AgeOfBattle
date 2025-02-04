@@ -9,8 +9,10 @@ public abstract class AbstractUnit : MonoBehaviour
     protected AudioClip attackSound;
     protected AudioClip deathSound;
     protected int health;
+    protected int maxHealth;
     protected int damage;
     protected float speed;
+    protected int unitWorth; // How much damage the unit does if it reaches the enemy base.
     protected int direction = 1;
     private bool isPlayerControlled = true;
     private int attackTime = 2;
@@ -31,6 +33,12 @@ public abstract class AbstractUnit : MonoBehaviour
     {
         health -= damageTaken;
         Debug.Log($"{gameObject.name} took {damageTaken} damage! Remaining health: {health}");
+
+        GoblinHealthBar healthBar = GetComponentInChildren<GoblinHealthBar>();
+        if (healthBar != null)
+        {
+            healthBar.UpdateHealthBar();
+        }
 
         if (health <= 0)
         {
@@ -116,8 +124,14 @@ public abstract class AbstractUnit : MonoBehaviour
     public void setSpeed(int speed) { this.speed = speed; }
     public void setDamage(int damage) { this.damage = damage; }
     public void setHealth(int health) { this.health = health; }
+    public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
     public void setAttackTime(int attackTime) { this.attackTime = attackTime; }
+    public void setUnitWorth(int unitWorth) { this.unitWorth = unitWorth; }
 
+    public int getHealth() { return this.health; }
+    public int getUnitWorth() { return this.unitWorth; }
+    public int getMaxHealth() { return this.maxHealth; }
+    public bool getIsPlayerControlled() { return this.isPlayerControlled; }
     private void OnTriggerEnter(Collider other)
     {
         AbstractUnit otherUnit = other.GetComponent<AbstractUnit>();

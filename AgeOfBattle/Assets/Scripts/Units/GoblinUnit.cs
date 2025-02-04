@@ -12,7 +12,11 @@ public class GoblinUnit : AbstractUnit
 
         this.setSpeed(6);
         this.setDamage(7);
-        this.setHealth(25);
+        this.setHealth(14);
+        this.setMaxHealth(14);
+        this.setUnitWorth(1);
+        this.setAttackTime(1);
+
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
@@ -85,7 +89,7 @@ public class GoblinUnit : AbstractUnit
 
     private System.Collections.IEnumerator ReturnToIdle()
     {
-        yield return new WaitForSeconds(2.0f); // Adjust delay based on attack animation length
+        yield return new WaitForSeconds(1.0f); // Adjust delay based on attack animation length
         if (animator != null)
         {
             Debug.Log($"{gameObject.name} returning to idle animation.");
