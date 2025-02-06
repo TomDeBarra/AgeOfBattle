@@ -45,6 +45,7 @@ public class BaseHealthManager : MonoBehaviour
         }
     }
 
+    public int getCurrentBaseHealth() { return currentBaseHealth; }
     public bool getIsPlayer() { return isPlayer; }
 }
 
