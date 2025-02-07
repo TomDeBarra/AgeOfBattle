@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GoblinHealthBar : MonoBehaviour
 {
@@ -27,17 +28,26 @@ public class GoblinHealthBar : MonoBehaviour
         }
 
         HideHealthBar(); // Hide initially
+
+        // Start the coroutine instead of Update()
+        StartCoroutine(UpdateHealthBarRoutine());
     }
 
-    private void Update()
+    // Coroutine to update every 0.1 seconds instead of Update()
+    private IEnumerator UpdateHealthBarRoutine()
     {
-        if (goblinUnit != null)
+        while (true)
         {
-            UpdateHealthBar();
-            UpdatePosition();
-        }
+            if (goblinUnit != null)
+            {
+                UpdateHealthBar();
+                UpdatePosition();
+            }
 
-        DetectMouseHover();
+            DetectMouseHover();
+
+            yield return new WaitForSeconds(0.1f); // Runs every 0.1 seconds
+        }
     }
 
     private void DetectMouseHover()
@@ -82,7 +92,6 @@ public class GoblinHealthBar : MonoBehaviour
         }
     }
 
-
     public void ShowHealthBar()
     {
         if (canvasGroup != null)
@@ -91,8 +100,6 @@ public class GoblinHealthBar : MonoBehaviour
             canvasGroup.alpha = 1; // Make visible
             canvasGroup.interactable = true;  // Allow interactions
             canvasGroup.blocksRaycasts = true; // Allow interactions
-            Debug.Log($"{gameObject.name}: Setting CanvasGroup Alpha to {canvasGroup.alpha}");
-            Debug.Log($"{gameObject.name}: Force-enabling CanvasGroup. Alpha = {canvasGroup.alpha}");
         }
     }
 
@@ -117,5 +124,5 @@ public class GoblinHealthBar : MonoBehaviour
         Debug.Log($"{gameObject.name}: Mouse exited, hiding health bar.");
         HideHealthBar();
     }
-
 }
+

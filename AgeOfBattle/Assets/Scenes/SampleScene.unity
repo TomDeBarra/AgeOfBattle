@@ -4014,7 +4014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyGoblinPrefab: {fileID: 6688229120525518201, guid: 87a1c901b0d5b504bb01acecc736da93, type: 3}
   spawnPoint: {fileID: 572242058}
-  unitOneSpawnTime: 4
+  unitOneSpawnTime: 2
 --- !u!1001 &593907827
 PrefabInstance:
   m_ObjectHideFlags: 0
