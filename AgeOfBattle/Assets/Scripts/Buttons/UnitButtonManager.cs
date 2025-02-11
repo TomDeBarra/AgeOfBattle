@@ -10,14 +10,16 @@ public class UnitButtonManager : AbstractButton
     public Sprite goblinButtonSprite; // Assign this in the Inspector
     public ButtonManager mainButtonManager; // Reference to the original ButtonManager instance
     public GameObject goblinPlayerPrefab;
+    public GameObject batteringRamPrefab; // Added Battering Ram prefab
 
     private float[] buttonCooldowns = { 2f, 10f, 20f }; // Cooldowns for each button
     private bool[] isButtonCoolingDown; // Tracks if a button is on cooldown
 
     void Awake()
     {
-        Debug.Log("Attempting to load GoblinPlayer prefab dynamically using Addressables...");
+        Debug.Log("Attempting to load GoblinPlayer and BatteringRam prefabs dynamically using Addressables...");
 
+        // Load Goblin prefab
         Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GoblinPlayer.prefab").Completed += handle =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
@@ -31,22 +33,32 @@ public class UnitButtonManager : AbstractButton
             }
         };
 
-        // Load the Goblin texture
+        // Load Battering Ram prefab
+        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/RamPlayer.prefab").Completed += handle =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                batteringRamPrefab = handle.Result;
+                Debug.Log("BatteringRam prefab successfully assigned dynamically.");
+            }
+            else
+            {
+                Debug.LogError("Failed to load BatteringRam prefab using Addressables!");
+            }
+        };
+
+        // Load Button Sprites
         goblinButtonSprite = Resources.Load<Sprite>("Sprites/goblin");
         if (goblinButtonSprite == null)
-        {
             Debug.LogError("Failed to load Goblin texture from Resources!");
-        }
         else
-        {
             Debug.Log("Goblin sprite successfully loaded from Resources.");
-        }
+
         batteringRamButtonSprite = Resources.Load<Sprite>("Sprites/batteringram");
         if (batteringRamButtonSprite == null)
             Debug.LogError("Failed to load Battering Ram sprite from Resources!");
         else
             Debug.Log("Battering Ram sprite successfully loaded.");
-
     }
 
     void Start()
@@ -75,10 +87,6 @@ public class UnitButtonManager : AbstractButton
             else if (i == 1 && batteringRamButtonSprite != null)
             {
                 buttons[i].GetComponent<Image>().sprite = batteringRamButtonSprite;
-            }
-            else if (buttonImages != null && i < buttonImages.Length && buttonImages[i] != null)
-            {
-                buttons[i].GetComponent<Image>().sprite = buttonImages[i];
             }
             else if (buttonImages != null && i < buttonImages.Length && buttonImages[i] != null)
             {
@@ -123,7 +131,7 @@ public class UnitButtonManager : AbstractButton
                 SpawnGoblin();
                 break;
             case 1:
-                Debug.Log("Spawning units...");
+                SpawnBatteringRam();
                 break;
             case 3:
                 ReturnToMainMenu();
@@ -149,6 +157,20 @@ public class UnitButtonManager : AbstractButton
         }
         Instantiate(goblinPlayerPrefab, spawnPosition, spawnRotation);
         Debug.Log("GoblinPlayer successfully spawned!");
+    }
+
+    private void SpawnBatteringRam()
+    {
+        Debug.Log("Spawning battering ram...");
+        Vector3 spawnPosition = new Vector3(-20f, -0.015f, 6.467504f); // Adjust as needed
+        Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
+        if (batteringRamPrefab == null)
+        {
+            Debug.LogError("BatteringRam prefab is not assigned in the Inspector!");
+            return;
+        }
+        Instantiate(batteringRamPrefab, spawnPosition, spawnRotation);
+        Debug.Log("Battering Ram successfully spawned!");
     }
 
     private void ReturnToMainMenu()
@@ -204,6 +226,7 @@ public class UnitButtonManager : AbstractButton
         isButtonCoolingDown[buttonIndex] = false;
     }
 }
+
 
 
 
