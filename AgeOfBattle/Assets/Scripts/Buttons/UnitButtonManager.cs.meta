@@ -5,9 +5,10 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - buttonPrefab: {instanceID: 0}
-  - goblinTexture: {fileID: 21300000, guid: 5715b3ba4d6d8544ebfe883bb054ca6a, type: 3}
+  - goblinButtonSprite: {instanceID: 0}
   - mainButtonManager: {instanceID: 0}
   - goblinPlayerPrefab: {fileID: 6688229120525518201, guid: fa84609eb74835146ae35c7a2f3a4f6e, type: 3}
+  - batteringRamPrefab: {fileID: 4699418706387201047, guid: 55da4b7fe1a5dfd46b04458fb6e22f3d, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

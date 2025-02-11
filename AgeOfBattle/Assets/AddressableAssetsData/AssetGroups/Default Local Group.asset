@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55da4b7fe1a5dfd46b04458fb6e22f3d
+    m_Address: Assets/Prefabs/Units/RamPlayer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04af49c9492e9f74ea4421bd3b4a26d6, type: 2}
   m_SchemaSet:
