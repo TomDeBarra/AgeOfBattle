@@ -3,17 +3,20 @@ using UnityEngine.UI;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 public class UnitButtonManager : AbstractButton
 {
     private Sprite batteringRamButtonSprite;
-    public Sprite goblinButtonSprite; // Assign this in the Inspector
-    public ButtonManager mainButtonManager; // Reference to the original ButtonManager instance
+    public Sprite goblinButtonSprite;
+    public Sprite rectangleButtonSprite;
+    public ButtonManager mainButtonManager;
     public GameObject goblinPlayerPrefab;
-    public GameObject batteringRamPrefab; // Added Battering Ram prefab
+    public GameObject batteringRamPrefab;
 
-    private float[] buttonCooldowns = { 2f, 10f, 20f }; // Cooldowns for each button
-    private bool[] isButtonCoolingDown; // Tracks if a button is on cooldown
+    private float[] buttonCooldowns = { 2f, 10f, 20f };
+    private bool[] isButtonCoolingDown;
 
     void Awake()
     {
@@ -49,30 +52,32 @@ public class UnitButtonManager : AbstractButton
 
         // Load Button Sprites
         goblinButtonSprite = Resources.Load<Sprite>("Sprites/goblin");
+        batteringRamButtonSprite = Resources.Load<Sprite>("Sprites/batteringram");
+        rectangleButtonSprite = Resources.Load<Sprite>("Sprites/meteors");
+
         if (goblinButtonSprite == null)
             Debug.LogError("Failed to load Goblin texture from Resources!");
-        else
-            Debug.Log("Goblin sprite successfully loaded from Resources.");
 
-        batteringRamButtonSprite = Resources.Load<Sprite>("Sprites/batteringram");
         if (batteringRamButtonSprite == null)
-            Debug.LogError("Failed to load Battering Ram sprite from Resources!");
-        else
-            Debug.Log("Battering Ram sprite successfully loaded.");
+            Debug.LogError("Failed to load Battering Ram texture from Resources!");
+
+        if (rectangleButtonSprite == null)
+            Debug.LogError("Failed to load meteors.png for rectangle button!");
     }
 
     void Start()
     {
         Debug.Log("UnitButtonManager Start called!");
-        isButtonCoolingDown = new bool[6]; // Initialize cooldown tracker array
+        isButtonCoolingDown = new bool[6];
         CreateButtons();
+       // RestoreCooldowns();
     }
 
     public override void CreateButtons()
     {
         Debug.Log("Creating buttons in UnitButtonManager...");
 
-        buttons = new GameObject[6]; // Initialize button array
+        buttons = new GameObject[6];
 
         for (int i = 0; i < 3; i++)
         {
@@ -82,15 +87,11 @@ public class UnitButtonManager : AbstractButton
 
             if (i == 0 && goblinButtonSprite != null)
             {
-                buttons[i].GetComponent<Image>().sprite = goblinButtonSprite; // Assign goblin texture to button 0
+                buttons[i].GetComponent<Image>().sprite = goblinButtonSprite;
             }
             else if (i == 1 && batteringRamButtonSprite != null)
             {
                 buttons[i].GetComponent<Image>().sprite = batteringRamButtonSprite;
-            }
-            else if (buttonImages != null && i < buttonImages.Length && buttonImages[i] != null)
-            {
-                buttons[i].GetComponent<Image>().sprite = buttonImages[i];
             }
 
             int index = i;
@@ -100,28 +101,23 @@ public class UnitButtonManager : AbstractButton
         buttons[3] = Instantiate(buttonPrefab, transform);
         buttons[3].GetComponent<RectTransform>().sizeDelta = new Vector2(50, 50);
         buttons[3].GetComponent<RectTransform>().anchoredPosition = new Vector2(480, 200);
-
-        if (buttonImages != null && buttonImages.Length > 3 && buttonImages[3] != null)
-        {
-            buttons[3].GetComponent<Image>().sprite = buttonImages[3];
-        }
+        buttons[3].GetComponent<Button>().onClick.AddListener(() => OnButtonClick(3));
 
         buttons[5] = Instantiate(buttonPrefab, transform);
         buttons[5].GetComponent<RectTransform>().sizeDelta = new Vector2(180, 50);
         buttons[5].GetComponent<RectTransform>().anchoredPosition = new Vector2(400, 130);
-
-        if (buttonImages != null && buttonImages.Length > 5 && buttonImages[5] != null)
+        if (rectangleButtonSprite != null)
         {
-            buttons[5].GetComponent<Image>().sprite = buttonImages[5];
+            buttons[5].GetComponent<Image>().sprite = rectangleButtonSprite;
         }
-
-        buttons[3].GetComponent<Button>().onClick.AddListener(() => OnButtonClick(3));
         buttons[5].GetComponent<Button>().onClick.AddListener(() => OnButtonClick(5));
+        ResetAllCooldowns();
+      //  RestoreCooldowns();
     }
 
     void OnButtonClick(int clickedIndex)
     {
-        if (isButtonCoolingDown[clickedIndex]) return; // Prevent pressing during cooldown
+        if (clickedIndex != 3 && IsButtonOnCooldown(clickedIndex)) return;
 
         Debug.Log("Unit Button " + clickedIndex + " clicked!");
 
@@ -129,20 +125,31 @@ public class UnitButtonManager : AbstractButton
         {
             case 0:
                 SpawnGoblin();
+                StartCooldown(clickedIndex);
                 break;
             case 1:
                 SpawnBatteringRam();
+                StartCooldown(clickedIndex);
                 break;
             case 3:
                 ReturnToMainMenu();
                 break;
-            case 5:
-                Debug.Log("Rectangle Button clicked!");
-                break;
+        }
+    }
+
+    private void ReturnToMainMenu()
+    {
+        Debug.Log("Returning to main buttons...");
+        if (mainButtonManager != null)
+        {
+            Destroy(this.transform.root.gameObject);
+            mainButtonManager.CreateButtons();
+        }
+        else
+        {
+            Debug.LogError("mainButtonManager is null!");
         }
 
-        // Start cooldown for ALL buttons when any is clicked
-        StartCoroutine(StartCooldownForAllButtons());
     }
 
     private void SpawnGoblin()
@@ -162,7 +169,7 @@ public class UnitButtonManager : AbstractButton
     private void SpawnBatteringRam()
     {
         Debug.Log("Spawning battering ram...");
-        Vector3 spawnPosition = new Vector3(-20f, -0.015f, 6.467504f); // Adjust as needed
+        Vector3 spawnPosition = new Vector3(-20f, -0.015f, 6.467504f);
         Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
         if (batteringRamPrefab == null)
         {
@@ -173,59 +180,90 @@ public class UnitButtonManager : AbstractButton
         Debug.Log("Battering Ram successfully spawned!");
     }
 
-    private void ReturnToMainMenu()
+    private void StartCooldown(int buttonIndex)
     {
-        Debug.Log("Returning to main buttons...");
-        if (mainButtonManager != null)
-        {
-            Destroy(this.transform.root.gameObject);
-            mainButtonManager.CreateButtons();
-        }
-        else
-        {
-            Debug.LogError("mainButtonManager is null!");
-        }
+        float cooldownEndTime = Time.time + buttonCooldowns[buttonIndex];
+        PlayerPrefs.SetFloat("ButtonCooldown_" + buttonIndex, cooldownEndTime);
+        PlayerPrefs.Save();
+
+        StartCoroutine(ButtonCooldownRoutine(buttonIndex, cooldownEndTime));
     }
 
-    private IEnumerator StartCooldownForAllButtons()
+    void ResetAllCooldowns()
     {
-        // Mark all buttons as cooling down
-        for (int i = 0; i < buttons.Length; i++)
+        float cooldownEndTime = Time.time;
+        for (int i = 0; i < buttonCooldowns.Length; i++)
         {
-            if (buttons[i] != null)
-            {
-                isButtonCoolingDown[i] = true;
-                StartCoroutine(ButtonCooldownRoutine(i, buttonCooldowns[i]));
-            }
+            PlayerPrefs.SetFloat("ButtonCooldown_" + i, cooldownEndTime);
+            PlayerPrefs.Save();
+
+            StartCoroutine(ButtonCooldownRoutine(i, cooldownEndTime));
         }
-        yield return null;
+
     }
 
-    private IEnumerator ButtonCooldownRoutine(int buttonIndex, float cooldownTime)
+    private bool IsButtonOnCooldown(int buttonIndex)
+    {
+        if (!PlayerPrefs.HasKey("ButtonCooldown_" + buttonIndex)) return false;
+
+        float cooldownEndTime = PlayerPrefs.GetFloat("ButtonCooldown_" + buttonIndex);
+
+        // Fix: Prevent eternal cooldowns by removing expired data
+        if (Time.time >= cooldownEndTime)
+        {
+            PlayerPrefs.DeleteKey("ButtonCooldown_" + buttonIndex);
+            return false;
+        }
+
+        return true;
+    }
+
+    private IEnumerator ButtonCooldownRoutine(int buttonIndex, float cooldownEndTime)
     {
         Button button = buttons[buttonIndex].GetComponent<Button>();
         Image buttonImage = buttons[buttonIndex].GetComponent<Image>();
 
-        float elapsedTime = 0f;
-        Color originalColor = buttonImage.color;
-
-        while (elapsedTime < cooldownTime)
+        while (Time.time < cooldownEndTime)
         {
-            float fillAmount = elapsedTime / cooldownTime;
+            float remainingTime = cooldownEndTime - Time.time;
+            float fillAmount = remainingTime / buttonCooldowns[buttonIndex];
 
-            // Darken the button gradually from right to left
-            buttonImage.color = new Color(originalColor.r * (1 - fillAmount), originalColor.g * (1 - fillAmount), originalColor.b * (1 - fillAmount), originalColor.a);
-
+            buttonImage.color = new Color(1f, 1f, 1f, 0.5f + (fillAmount * 0.5f));
             button.interactable = false;
-            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         button.interactable = true;
-        buttonImage.color = originalColor; // Reset to original color
-        isButtonCoolingDown[buttonIndex] = false;
+        buttonImage.color = Color.white;
+        PlayerPrefs.DeleteKey("ButtonCooldown_" + buttonIndex);
+    }
+
+    private void RestoreCooldowns()
+    {
+        for (int i = 0; i < buttonCooldowns.Length; i++)
+        {
+            if (PlayerPrefs.HasKey("ButtonCooldown_" + i))
+            {
+                float cooldownEndTime = PlayerPrefs.GetFloat("ButtonCooldown_" + i);
+
+                if (Time.time < cooldownEndTime)
+                {
+                    StartCoroutine(ButtonCooldownRoutine(i, cooldownEndTime));
+                }
+                else
+                {
+                    // Fix: Clear out expired cooldowns
+                    PlayerPrefs.DeleteKey("ButtonCooldown_" + i);
+                }
+            }
+        }
     }
 }
+
+
+
+
+
 
 
 

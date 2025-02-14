@@ -14,7 +14,7 @@ public class BatteringRamUnit : AbstractUnit
         this.setHealth(30); // Increased health
         this.setMaxHealth(30);
         this.setUnitWorth(3); // Worth more due to power
-        this.setAttackTime(2); // Longer attack time
+        this.setAttackTime(1); // Longer attack time
 
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();

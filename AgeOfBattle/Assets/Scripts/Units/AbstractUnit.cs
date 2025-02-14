@@ -14,10 +14,10 @@ public abstract class AbstractUnit : MonoBehaviour
     protected float speed;
     protected int unitWorth; // How much damage the unit does if it reaches the enemy base.
     protected int direction = 1;
-    private bool isPlayerControlled = true;
-    private int attackTime = 2;
-    private bool isAttacking = false;
-    private bool isMoving = true;
+    protected bool isPlayerControlled = true;
+    protected int attackTime = 2;
+    protected bool isAttacking = false;
+    protected bool isMoving = true;
 
     private void Start()
     {
