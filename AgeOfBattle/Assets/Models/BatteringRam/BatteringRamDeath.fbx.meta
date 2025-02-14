@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3e1d67b64d97b8b4298d5163f2d418e3
+guid: e1bd5add09cd8fb4cbb9a4179f7aaf3d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: BatteringRam_Death
       takeName: Take 001
       internalID: 1827226128182048838
       firstFrame: 1
-      lastFrame: 60
+      lastFrame: 40
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

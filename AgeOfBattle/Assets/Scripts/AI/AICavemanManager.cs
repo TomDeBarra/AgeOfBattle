@@ -1,38 +1,76 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
-public class AICavemanManager : MonoBehaviour
+public class AICaveman : MonoBehaviour
 {
-    public GameObject enemyGoblinPrefab; // Assign in Inspector or dynamically
-    public Transform spawnPoint; // Where the goblin will spawn
-    public int unitOneSpawnTime = 4; // Time in seconds between spawns
+    public GameObject unitOnePrefab; // Goblin unit
+    public GameObject batteringRamPrefab; // Battering Ram unit
+
+    public float unitOneSpawnTime = 10f; // Spawn time for goblins
+    public float batteringRamSpawnTime = 15f; // Default spawn time for Battering Rams
+
+    public Transform spawnPoint;
 
     void Start()
     {
-        StartCoroutine(SpawnEnemyGoblin());
+        // Start spawning both unit types on separate timers
+        StartCoroutine(SpawnUnitOne());
+        StartCoroutine(SpawnBatteringRam());
     }
 
-    private IEnumerator SpawnEnemyGoblin()
+    private IEnumerator SpawnUnitOne()
     {
-        while (true) // Continuously spawn goblins
+        while (true)
         {
-            yield return new WaitForSeconds(unitOneSpawnTime);
+            yield return new WaitForSeconds(unitOneSpawnTime); // Wait before spawning
 
-            if (enemyGoblinPrefab != null)
+            if (unitOnePrefab != null)
             {
-                GameObject spawnedGoblin = Instantiate(enemyGoblinPrefab, spawnPoint.position, Quaternion.identity);
-                GoblinUnit goblinUnit = spawnedGoblin.GetComponent<GoblinUnit>();
-                if (goblinUnit != null)
+                GameObject newUnit = Instantiate(unitOnePrefab, spawnPoint.position, Quaternion.identity);
+                AbstractUnit unitScript = newUnit.GetComponent<AbstractUnit>();
+                if (unitScript != null)
                 {
-                    goblinUnit.setPlayerControlled(false); // Set as enemy unit
-                    goblinUnit.setDirection(-1); // Make sure enemies move LEFT
+                    unitScript.setPlayerControlled(false); // Mark as enemy unit
+                    Debug.Log("Spawned AI Goblin unit!");
                 }
-                Debug.Log("Spawned an EnemyGoblin at " + spawnPoint.position);
+                else
+                {
+                    Debug.LogError("Spawned Goblin unit does not have an AbstractUnit script!");
+                }
             }
             else
             {
-                Debug.LogError("EnemyGoblin prefab is not assigned!");
+                Debug.LogError("Unit One (Goblin) prefab is not assigned!");
+            }
+        }
+    }
+
+    private IEnumerator SpawnBatteringRam()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(batteringRamSpawnTime); // Wait before spawning
+
+            if (batteringRamPrefab != null)
+            {
+                GameObject newUnit = Instantiate(batteringRamPrefab, spawnPoint.position, Quaternion.identity);
+                AbstractUnit unitScript = newUnit.GetComponent<AbstractUnit>();
+                if (unitScript != null)
+                {
+                    unitScript.setPlayerControlled(false); // Mark as enemy unit
+                    Debug.Log("Spawned AI Battering Ram!");
+                }
+                else
+                {
+                    Debug.LogError("Spawned Battering Ram does not have an AbstractUnit script!");
+                }
+            }
+            else
+            {
+                Debug.LogError("Battering Ram prefab is not assigned!");
             }
         }
     }
 }
+
+
