@@ -628,7 +628,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2407667312837410928, guid: 269edebf7d040c5459086b910069f430, type: 3}
       propertyPath: m_Name
-      value: CaveBase
+      value: EnemyBase
       objectReference: {fileID: 0}
     - target: {fileID: 6977178684146488609, guid: 269edebf7d040c5459086b910069f430, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4580,7 +4580,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2407667312837410928, guid: 269edebf7d040c5459086b910069f430, type: 3}
       propertyPath: m_Name
-      value: CaveBase (1)
+      value: PlayerBase
       objectReference: {fileID: 0}
     - target: {fileID: 6977178684146488609, guid: 269edebf7d040c5459086b910069f430, type: 3}
       propertyPath: m_LocalPosition.x
