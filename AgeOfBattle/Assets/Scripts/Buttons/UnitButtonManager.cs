@@ -11,16 +11,20 @@ public class UnitButtonManager : AbstractButton
     private Sprite batteringRamButtonSprite;
     public Sprite goblinButtonSprite;
     public Sprite rectangleButtonSprite;
+    public Sprite giantButtonSprite;
+
     public ButtonManager mainButtonManager;
+
     public GameObject goblinPlayerPrefab;
     public GameObject batteringRamPrefab;
+    public GameObject giantPrefab;
 
     private float[] buttonCooldowns = { 2f, 10f, 20f };
     private bool[] isButtonCoolingDown;
 
     void Awake()
     {
-        Debug.Log("Attempting to load GoblinPlayer and BatteringRam prefabs dynamically using Addressables...");
+        Debug.Log("Attempting to load GoblinPlayer,BatteringRam, Giant prefabs dynamically using Addressables...");
 
         // Load Goblin prefab
         Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GoblinPlayer.prefab").Completed += handle =>
@@ -50,19 +54,36 @@ public class UnitButtonManager : AbstractButton
             }
         };
 
+        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GiantPlayer.prefab").Completed += handle =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                giantPrefab = handle.Result;
+                Debug.Log("Giant prefab successfully assigned dynamically.");
+            }
+            else
+            {
+                Debug.LogError("Failed to load Giant prefab using Addressables!");
+            }
+        };
+
         // Load Button Sprites
         goblinButtonSprite = Resources.Load<Sprite>("Sprites/goblin");
         batteringRamButtonSprite = Resources.Load<Sprite>("Sprites/batteringram");
         rectangleButtonSprite = Resources.Load<Sprite>("Sprites/meteors");
+        giantButtonSprite = Resources.Load<Sprite>("Sprites/giant");
 
         if (goblinButtonSprite == null)
-            Debug.LogError("Failed to load Goblin texture from Resources!");
+            Debug.LogError("Failed to load Goblin button texture from Resources!");
 
         if (batteringRamButtonSprite == null)
-            Debug.LogError("Failed to load Battering Ram texture from Resources!");
+            Debug.LogError("Failed to load Battering Ram button texture from Resources!");
 
         if (rectangleButtonSprite == null)
             Debug.LogError("Failed to load meteors.png for rectangle button!");
+
+        if (giantButtonSprite == null)
+            Debug.LogError("Failed to load Giant button texture from Resources!");
     }
 
     void Start()
@@ -93,7 +114,10 @@ public class UnitButtonManager : AbstractButton
             {
                 buttons[i].GetComponent<Image>().sprite = batteringRamButtonSprite;
             }
-
+            else if (i == 2 && giantButtonSprite != null)
+            {
+                buttons[i].GetComponent<Image>().sprite = giantButtonSprite;
+            }
             int index = i;
             buttons[i].GetComponent<Button>().onClick.AddListener(() => OnButtonClick(index));
         }
@@ -129,6 +153,10 @@ public class UnitButtonManager : AbstractButton
                 break;
             case 1:
                 SpawnBatteringRam();
+                StartCooldown(clickedIndex);
+                break;
+            case 2:
+                SpawnGiant();
                 StartCooldown(clickedIndex);
                 break;
             case 3:
@@ -178,6 +206,22 @@ public class UnitButtonManager : AbstractButton
         }
         Instantiate(batteringRamPrefab, spawnPosition, spawnRotation);
         Debug.Log("Battering Ram successfully spawned!");
+    }
+
+    private void SpawnGiant()
+    {
+        Debug.Log("Spawning giant...");
+        Vector3 spawnPosition = new Vector3(-20f, -0.015f, 6.467504f);
+        Quaternion spawnRotation = Quaternion.Euler(0f, 0f, 0f);
+        if (batteringRamPrefab == null)
+        {
+            Debug.LogError("Giant prefab is not assigned in the Inspector!");
+            return;
+        }
+        GameObject instantiatedGiant = Instantiate(giantPrefab, spawnPosition, spawnRotation);
+        instantiatedGiant.GetComponent<GiantUnit>().setPlayerControlled(true);
+        instantiatedGiant.GetComponent<GiantUnit>().setDirection(-1);
+        Debug.Log("Giant successfully spawned!");
     }
 
     private void StartCooldown(int buttonIndex)

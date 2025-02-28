@@ -32,6 +32,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7c4e97021d9f4645bddc73afd8390eb
+    m_Address: Assets/Prefabs/Units/GiantPlayer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04af49c9492e9f74ea4421bd3b4a26d6, type: 2}
   m_SchemaSet:
