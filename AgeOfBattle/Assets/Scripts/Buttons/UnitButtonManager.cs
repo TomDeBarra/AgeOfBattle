@@ -54,7 +54,7 @@ public class UnitButtonManager : AbstractButton
             }
         };
 
-        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GiantPlayer.prefab").Completed += handle =>
+        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/GiantDummyPlayer.prefab").Completed += handle =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
@@ -220,7 +220,7 @@ public class UnitButtonManager : AbstractButton
         }
         GameObject instantiatedGiant = Instantiate(giantPrefab, spawnPosition, spawnRotation);
         instantiatedGiant.GetComponent<GiantUnit>().setPlayerControlled(true);
-        instantiatedGiant.GetComponent<GiantUnit>().setDirection(-1);
+        instantiatedGiant.GetComponent<GiantUnit>().setDirection(1);
         Debug.Log("Giant successfully spawned!");
     }
 

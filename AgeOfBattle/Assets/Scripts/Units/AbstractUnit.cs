@@ -91,7 +91,8 @@ public abstract class AbstractUnit : MonoBehaviour
         if (isMoving && !isAttacking)
         {
             Vector3 movement = new Vector3(speed * direction * Time.deltaTime, 0, 0);
-            transform.Translate(movement);
+            transform.position += movement;
+            // transform.Translate(movement);
             if (animator != null)
             {
                 animator.SetBool("isRunning", true);

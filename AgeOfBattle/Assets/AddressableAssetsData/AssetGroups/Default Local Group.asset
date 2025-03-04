@@ -37,6 +37,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f0d23b5f09e81344b417133c83c864a
+    m_Address: Assets/Prefabs/Units/GiantEnemy.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b09d273b932ba9d46bd28a015842e7e2
+    m_Address: Assets/Prefabs/Units/GiantDummyPlayer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04af49c9492e9f74ea4421bd3b4a26d6, type: 2}
   m_SchemaSet:
