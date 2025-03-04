@@ -4014,7 +4014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goblinPrefab: {fileID: 6688229120525518201, guid: 87a1c901b0d5b504bb01acecc736da93, type: 3}
   batteringRamPrefab: {fileID: 4699418706387201047, guid: d31775923ca93714aa3795415b442344, type: 3}
-  giantPrefab: {fileID: 2181215828479371183, guid: 3f0d23b5f09e81344b417133c83c864a, type: 3}
+  giantPrefab: {fileID: 2181215828479371183, guid: a7c4e97021d9f4645bddc73afd8390eb, type: 3}
   goblinSpawnTime: 10
   batteringRamSpawnTime: 4
   giantSpawnTime: 2

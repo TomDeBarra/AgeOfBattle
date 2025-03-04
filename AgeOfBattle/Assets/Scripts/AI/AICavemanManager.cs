@@ -68,6 +68,7 @@ public class AICaveman : MonoBehaviour
                     Debug.LogError("Spawned Battering Ram does not have an AbstractUnit script!");
                 }
             }
+            
             else
             {
                 Debug.LogError("Battering Ram prefab is not assigned!");
