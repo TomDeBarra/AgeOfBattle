@@ -4014,7 +4014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goblinPrefab: {fileID: 6688229120525518201, guid: 87a1c901b0d5b504bb01acecc736da93, type: 3}
   batteringRamPrefab: {fileID: 4699418706387201047, guid: d31775923ca93714aa3795415b442344, type: 3}
-  giantPrefab: {fileID: 2181215828479371183, guid: a7c4e97021d9f4645bddc73afd8390eb, type: 3}
+  giantPrefab: {fileID: 5959066785322514513, guid: 44730291b88dea6479ee443eae2bf8f1, type: 3}
   goblinSpawnTime: 10
   batteringRamSpawnTime: 4
   giantSpawnTime: 2
@@ -9892,6 +9892,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+--- !u!1001 &1413148012
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -23.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 16.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 689330883043945265, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7205645550631890266, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
+      propertyPath: m_Name
+      value: MeteorPrefab
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f83f538bbb00a914ebf4e40d9db4c445, type: 3}
 --- !u!1001 &1418053982
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14534,3 +14591,4 @@ SceneRoots:
   - {fileID: 1396086407}
   - {fileID: 1991968412}
   - {fileID: 1682472176}
+  - {fileID: 1413148012}
