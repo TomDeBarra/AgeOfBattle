@@ -30,7 +30,15 @@ public class BatteringRamUnit : AbstractUnit
 
     public override void Die()
     {
-        Debug.Log($"{gameObject.name} (Battering Ram) has been destroyed!");
+        PlayDieAnimationAndSound();
+        Debug.Log($"{gameObject.name} (Battering Ram) has been destroyed!");   
+        StartCoroutine(DestroyAfterDelay(2f)); // Slightly longer destruction delay
+        this.isMoving = false;
+        this.isDead = true;
+    }
+
+    override public void PlayDieAnimationAndSound()
+    {
         if (animator != null)
         {
             animator.Play("BatteringRam_Death"); // Play death animation
@@ -39,7 +47,6 @@ public class BatteringRamUnit : AbstractUnit
         {
             rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
         }
-        StartCoroutine(DestroyAfterDelay(2f)); // Slightly longer destruction delay
 
         if (audioSource != null && deathSound != null)
         {

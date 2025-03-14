@@ -31,7 +31,15 @@ public class GoblinUnit : AbstractUnit
 
     public override void Die()
     {
+        PlayDieAnimationAndSound();
         Debug.Log($"{gameObject.name} has died!");
+        StartCoroutine(DestroyAfterDelay(1f)); // Destroy after 1 second
+        this.isMoving = false;
+        this.isDead = true;
+    }
+
+    override public void PlayDieAnimationAndSound()
+    { 
         if (animator != null)
         {
             animator.Play("RigGob1_Death"); // Play death animation
@@ -54,7 +62,7 @@ public class GoblinUnit : AbstractUnit
         else if (deathSound == null)
         {
             Debug.LogError("Death sound not assigned in the Inspector.");
-        }
+        }      
     }
 
     override public void PlayAttackAnimationAndSound()

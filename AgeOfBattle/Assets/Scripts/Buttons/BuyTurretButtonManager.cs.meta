@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 88bd67ac88c2f5342845d95c7af7f95d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - buttonPrefab: {fileID: 7754614529237855095, guid: 96fc3f162c002854fb8b558c0fd3b9d8, type: 3}
+  - goblinButtonSprite: {instanceID: 0}
+  - rectangleButtonSprite: {instanceID: 0}
+  - giantButtonSprite: {instanceID: 0}
+  - mainButtonManager: {instanceID: 0}
+  - goblinPlayerPrefab: {instanceID: 0}
+  - batteringRamPrefab: {instanceID: 0}
+  - giantPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
