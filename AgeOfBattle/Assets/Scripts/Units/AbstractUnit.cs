@@ -18,6 +18,7 @@ public abstract class AbstractUnit : MonoBehaviour
     protected int attackTime = 2;
     protected bool isAttacking = false;
     protected bool isMoving = true;
+    protected bool isDead = false;
 
     private void Start()
     {
@@ -47,6 +48,7 @@ public abstract class AbstractUnit : MonoBehaviour
     }
 
     public abstract void Die();
+    public abstract void PlayDieAnimationAndSound();
     public abstract void PlayAttackAnimationAndSound();
 
     protected void checkForFriendlyUnitCollisionAhead()
@@ -88,7 +90,7 @@ public abstract class AbstractUnit : MonoBehaviour
 
     public void Move()
     {
-        if (isMoving && !isAttacking)
+        if (isMoving && !isAttacking && !isDead)
         {
             Vector3 movement = new Vector3(speed * direction * Time.deltaTime, 0, 0);
             transform.position += movement;

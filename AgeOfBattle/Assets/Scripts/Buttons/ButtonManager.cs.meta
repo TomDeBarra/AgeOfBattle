@@ -3,7 +3,10 @@ guid: 478b78001532c70438383abf932fcd17
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - buttonPrefab: {instanceID: 0}
+  - unitButtonManagerPrefab: {instanceID: 0}
+  - buyTurretButtonManagerPrefab: {fileID: 4258899583449262853, guid: 43146eb72d73f72488ef890911b8529b, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

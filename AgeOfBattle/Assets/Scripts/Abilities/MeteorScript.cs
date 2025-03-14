@@ -6,6 +6,11 @@ public class MeteorScript : MonoBehaviour
 {
     public float fallSpeed = 10f; // Speed at which meteors fall
 
+    private void Start()
+    {
+        StartCoroutine(DestroyAfterDelay(4f));
+    }
+
     private void Update()
     {
         // Move the meteor downward
@@ -22,6 +27,12 @@ public class MeteorScript : MonoBehaviour
         }
 
         // Destroy meteor upon impact
+        Destroy(gameObject);
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
 }

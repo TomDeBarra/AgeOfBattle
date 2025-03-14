@@ -30,16 +30,26 @@ public class GiantUnit : AbstractUnit
 
     public override void Die()
     {
+        PlayDieAnimationAndSound();
+        Debug.Log($"{gameObject.name} has died!");
+        StartCoroutine(DestroyAfterDelay(1f)); // Destroy after 1 second
+        this.isMoving = false;
+        this.isDead = true;
+    }
+
+    override public void PlayDieAnimationAndSound()
+    {
+     
         Debug.Log($"{gameObject.name} has died!");
         if (animator != null)
         {
-            animator.Play("RigGob1_Death"); // Play death animation
+            animator.Play("Giant@Damage01"); // Play death animation
         }
         if (rb != null)
         {
             rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
         }
-        StartCoroutine(DestroyAfterDelay(1f)); // Destroy after 1 second
+        StartCoroutine(DestroyAfterDelay(2.5f)); // Destroy after 2 second
 
         if (audioSource != null && attackSound != null)
         {
@@ -53,7 +63,7 @@ public class GiantUnit : AbstractUnit
         else if (deathSound == null)
         {
             Debug.LogError("Death sound not assigned in the Inspector.");
-        }
+        }     
     }
 
     override public void PlayAttackAnimationAndSound()

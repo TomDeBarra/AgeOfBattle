@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ButtonManager : AbstractButton
 {
     public GameObject unitButtonManagerPrefab; // Reference to UnitButtonManager prefab
+    public GameObject buyTurretButtonManagerPrefab; // Reference to UnitButtonManager prefab
 
     private GameObject meteorPrefab; // Assign in Inspector
     private float minX = -23f; // Minimum X spawn position
@@ -25,16 +26,16 @@ public class ButtonManager : AbstractButton
         Debug.Log("Attempting to load meteorPrefab dynamically using Addressables...");
 
         // Load Goblin prefab
-        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Units/MeteorPrefab.prefab").Completed += handle =>
+        Addressables.LoadAssetAsync<GameObject>("Assets/Prefabs/Abilities/MeteorPrefab.prefab").Completed += handle =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
                 meteorPrefab = handle.Result;
-                Debug.Log("GoblinPlayer prefab successfully assigned dynamically.");
+                Debug.Log("MeteorPrefab successfully assigned dynamically.");
             }
             else
             {
-                Debug.LogError("Failed to load GoblinPlayer prefab using Addressables!");
+                Debug.LogError("Failed to load MeteorPrefab using Addressables!");
             }
         };
     }
@@ -101,9 +102,28 @@ public class ButtonManager : AbstractButton
                 }
 
                 break;
+
             case 1:
                 Debug.Log("Square Button 2 clicked!");
+                DestroyAllButtons();
+
+                // Instantiate UnitButtonManagerPrefab
+                GameObject turretManager = Instantiate(buyTurretButtonManagerPrefab, transform.parent);
+                //turretManager.SetActive(true); // Ensure it's active
+                BuyTurretButtonManager buyTurretButtonManager = turretManager.GetComponentInChildren<BuyTurretButtonManager>();
+
+                if (buyTurretButtonManager != null)
+                {
+                    buyTurretButtonManager.mainButtonManager = this; // Assign reference to this ButtonManager
+                    Debug.Log("BuyTurretButtonManager successfully instantiated & assigned mainButtonManager!");
+                }
+                else
+                {
+                    Debug.LogError("BuyTurretButtonManager did not instantiate correctly!");
+                }
+
                 break;
+
             case 2:
                 Debug.Log("Square Button 3 clicked!");
                 break;
