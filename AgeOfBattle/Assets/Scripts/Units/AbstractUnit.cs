@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class AbstractUnit : MonoBehaviour
+public abstract class AbstractUnit : MonoBehaviour, IHealth
 {
     protected Animator animator;
     protected AudioSource audioSource;
@@ -138,7 +138,7 @@ public abstract class AbstractUnit : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         AbstractUnit otherUnit = other.GetComponent<AbstractUnit>();
-
+        // IHealth otherUnit = other.GetComponent<IHealth>();
         if (otherUnit != null)
         {
             float distanceToOther = Mathf.Abs(transform.position.x - other.transform.position.x);
