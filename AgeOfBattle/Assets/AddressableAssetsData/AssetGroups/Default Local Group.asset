@@ -57,6 +57,36 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9df9f53895b4bf64a965e2e18b0b101a
+    m_Address: Assets/Prefabs/Units/Unit Sounds/GoblinDeath.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4eab0552ab50cc541b2fa8618f2d4669
+    m_Address: Assets/Prefabs/Units/Unit Sounds/GoblinAttackComplete.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1c62b154189793468b814b1964f57de
+    m_Address: Assets/Prefabs/Units/Unit Sounds/GoblinMoving.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07e21df8255a38044bdc6390090556cf
+    m_Address: Assets/Prefabs/Units/Unit Sounds/RamMoving.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a730081cbfc82f245a122c48c5281f1f
+    m_Address: Assets/Prefabs/Units/Unit Sounds/RamDeath.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cca6f5d026e613b40abec6b9089d63a5
+    m_Address: Assets/Prefabs/Units/Unit Sounds/RamAttack.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04af49c9492e9f74ea4421bd3b4a26d6, type: 2}
   m_SchemaSet:
