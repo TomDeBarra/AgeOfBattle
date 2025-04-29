@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public abstract class AbstractUnit : MonoBehaviour, IHealth
 {
@@ -8,6 +10,7 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth
     protected AudioSource audioSource;
     protected AudioClip attackSound;
     protected AudioClip deathSound;
+    protected AudioClip movingSound;
     protected int health;
     protected int maxHealth;
     protected int damage;
@@ -19,16 +22,19 @@ public abstract class AbstractUnit : MonoBehaviour, IHealth
     protected bool isAttacking = false;
     protected bool isMoving = true;
     protected bool isDead = false;
+    protected bool isPlayingMovingSound = false;
 
     private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        // Load AudioClips using Addressables in each unit script as each are unique and the function needs to have unique names to look for too
+    }
+
+    private void Update()
     {
         
     }
 
-    private void Update()
-    {   
-        
-    }
 
     public void TakeDamage(int damageTaken)
     {

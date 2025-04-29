@@ -4085,9 +4085,9 @@ MonoBehaviour:
   goblinPrefab: {fileID: 6688229120525518201, guid: 87a1c901b0d5b504bb01acecc736da93, type: 3}
   batteringRamPrefab: {fileID: 4699418706387201047, guid: d31775923ca93714aa3795415b442344, type: 3}
   giantPrefab: {fileID: 5959066785322514513, guid: 44730291b88dea6479ee443eae2bf8f1, type: 3}
-  goblinSpawnTime: 10
-  batteringRamSpawnTime: 4
-  giantSpawnTime: 2
+  goblinSpawnTime: 20
+  batteringRamSpawnTime: 20
+  giantSpawnTime: 20
   spawnPoint: {fileID: 572242058}
 --- !u!1001 &593907827
 PrefabInstance:

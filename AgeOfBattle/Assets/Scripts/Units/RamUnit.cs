@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class BatteringRamUnit : AbstractUnit
 {
@@ -19,6 +21,10 @@ public class BatteringRamUnit : AbstractUnit
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
+
+        LoadAudio("Assets/Prefabs/Units/Unit Sounds/RamAttack.mp3");
+        LoadAudio("Assets/Prefabs/Units/Unit Sounds/RamDeath.mp3");
+        LoadAudio("Assets/Prefabs/Units/Unit Sounds/RamMoving.mp3");
     }
 
     // Update is called once per frame
@@ -26,6 +32,40 @@ public class BatteringRamUnit : AbstractUnit
     {
         Move();
         checkForFriendlyUnitCollisionAhead();
+        PlayMovingSound();
+    }
+
+    protected void LoadAudio(string address)
+    {
+        Addressables.LoadAssetAsync<AudioClip>(address).Completed += (AsyncOperationHandle<AudioClip> handle) =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                if (address.Contains("RamAttack"))
+                    attackSound = handle.Result;
+                else if (address.Contains("RamDeath"))
+                    deathSound = handle.Result;
+                else if (address.Contains("RamMoving"))
+                    movingSound = handle.Result; // Load moving sound dynamically
+            }
+            else
+            {
+                Debug.LogError($"Failed to load audio: {address}");
+            }
+        };
+    }
+
+    public void PlayMovingSound()
+    {
+        if (movingSound == null || audioSource == null) return;
+
+        if (isMoving && !isAttacking)
+        {
+            if (!audioSource.isPlaying) // Ensure it only plays if nothing is currently playing
+            {
+                audioSource.PlayOneShot(movingSound);
+            }
+        }
     }
 
     public override void Die()
